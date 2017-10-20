@@ -18,6 +18,8 @@
 https://stackoverflow.com/questions/38703853/how-to-use-google-speech-recognition-api-in-python
 에러수정방법.
 '''
+from tempfile import TemporaryFile
+
 """Google Cloud Speech API sample application using the streaming API.
 
 NOTE: This module requires the additional dependency `pyaudio`. To install
@@ -30,11 +32,12 @@ Example usage:
 """
 
 # [START import_libraries]
-from __future__ import division
-
+#from __future__ import division
+import naverTTS
 import re
 import sys
-
+from gtts import gTTS
+import os
 from google.cloud import speech
 from google.cloud.speech import enums
 from google.cloud.speech import types
@@ -45,8 +48,19 @@ from future.moves import queue
 
 # Audio recording parameters
 RATE = 16000
-CHUNK = int(RATE / 1000)  # 100ms
+CHUNK = int(RATE / 100)  # 100ms
 
+#네이버 TTS 클레스
+
+# speaker
+#
+#  0 : 'mijin',     #한국어 여성
+#  1 : 'jinho',     #한국어 남성
+# speed
+#     0 = 일반 속도
+#tts = naverTTS.NaverTTS(0, 0)
+#or
+tts = naverTTS.NaverTTS()
 
 class MicrophoneStream(object):
     """Opens a recording stream as a generator yielding the audio chunks."""
@@ -140,6 +154,7 @@ def CommandProc(stt):
             if cmd == cmdList[0]:
                 #구글 스피치 대답 화면에 표시
                 print ('Eddy : ' + cmdList[1])
+                tts.play(cmdList[1])
                 # 종료 명령 리턴 0이면 종료
                 # 1이면 계속
                 return cmdList[2]
